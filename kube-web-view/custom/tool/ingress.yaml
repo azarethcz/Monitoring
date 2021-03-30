@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: kube-web-view
+spec:
+  rules:
+  - host: dash.tool.bankid.cz
+    http:
+      paths:
+      - backend:
+          serviceName: kube-web-view
+          servicePort: 80
+        path: /
+  tls:
+  - secretName: kube-web-view
+    hosts:
+    - dash.tool.bankid.cz

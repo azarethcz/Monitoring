@@ -1,0 +1,50 @@
+alertmanager:
+  enabled: true
+  persistentVolume:
+    existingClaim: monitoring-prometheus-alertmanager
+
+configmapReload:
+  prometheus:
+    resources:
+      requests:
+        cpu: 1m
+        memory: 10Mi
+      limits:
+        cpu: 50m
+        memory: 100Mi
+
+server:
+  statefulset:
+    enabled: true
+  strategy:
+    type: Recreate
+  global:
+    scrape_interval: 10s
+    evaluation_interval: 10s
+    scrape_timeout: 10s
+
+### use uncommented for tool for working liveness and readiness probes###
+#prometheusSpec:  
+#  containers:
+#  - name: prometheus
+#    livenessProbe:
+#      failureThreshold: 1000
+#    readinessProbe:
+#      failureThreshold: 1000
+
+  persistentVolume:
+    existingClaim: monitoring-prometheus
+
+pushgateway:
+  enabled: false
+
+kubeStateMetrics:
+  image:
+    repository: quay.io/coreos/kube-state-metrics
+    tag: latest
+    pullPolicy: Always
+
+nodeExporter:
+  service:
+    hostPort: 19100
+    servicePort: 19100

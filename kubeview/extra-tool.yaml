@@ -1,0 +1,10 @@
+ingress:
+  enabled: true
+  annotations: {}
+  hosts:
+    - host: kubeview.tool.bankid.cz
+      paths: ["/"]
+  tls:
+    - secretName: kube-view
+      hosts:
+        - kubeview.tool.bankid.cz

@@ -1,0 +1,18 @@
+spec:
+  template:
+    spec:
+      containers:
+      - name: sentry-web
+        command: ["/bin/bash","-c","cp /bankid-ca-certs/*.crt /usr/local/share/ca-certificates/; update-ca-certificates; sentry run web"]
+        volumeMounts:
+        - mountPath: /bankid-ca-certs
+          name: ca-certs
+      volumes:
+      - name: ca-certs
+        configMap:
+          name: bankid-ca-certs
+          items:
+            - key: "bankid-root-ca.crt"
+              path: "bankid-root-ca.crt"
+            - key: "bankid-prod-ca.crt"
+              path: "bankid-prod-ca.crt"

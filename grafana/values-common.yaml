@@ -1,0 +1,53 @@
+resources:
+  requests:
+    cpu: 16m
+    memory: 100Mi
+  limits:
+    cpu: 128m
+    memory: 300Mi
+
+admin:
+  existingSecret: grafana-admin
+
+envValueFrom:
+  GF_DATABASE_PASSWORD:
+    secretKeyRef:
+      name: grafana-db-pwd
+      key: password
+
+extraConfigmapMounts:
+  - name: cm-ca-certs
+    subPath: ca-certificates.crt
+    configMap: cm-ca-certs
+    mountPath: /etc/ssl/certs/bankid-ca.crt
+    readOnly: true
+
+deploymentStrategy:
+  type: Recreate
+
+persistence:
+  enabled: true
+  existingClaim: grafana-pvc-rwo
+
+grafana.ini:
+  paths:
+    data: /var/lib/grafana/data
+    logs: /var/log/grafana
+    plugins: /var/lib/grafana/plugins
+    provisioning: /etc/grafana/provisioning
+  analytics:
+    check_for_updates: true
+  log:
+    mode: console
+  grafana_net:
+    url: https://grafana.net
+  smtp:
+    enabled: true
+    host: smtp.office365.com:587
+    from_address: noreply@bankid.cz
+  
+smtp:
+  existingSecret: grafana-smtp
+
+plugins:
+  - grafana-polystat-panel

@@ -1,0 +1,45 @@
+ingress:
+  enabled: true
+  hosts:
+    - grafana.tool.bankid.cz
+  tls:
+    - secretName: grafana-tls-tool
+      hosts:
+        - grafana.tool.bankid.cz
+
+datasources:
+ datasources.yaml:
+   apiVersion: 1
+   datasources:
+   - name: Prometheus-Tool
+     type: prometheus
+     url: https://prometheus.tool.bankid.cz
+     access: proxy
+     isDefault: true
+   - name: Prometheus-Stage
+     type: prometheus
+     url: https://prometheus.stage.bankid.cz
+     access: proxy
+     isDefault: false
+
+envValueFrom:
+  GF_AUTH_GITLAB_CLIENT_SECRET:
+    secretKeyRef:
+      name: grafana-gitlab-oauth
+      key: client_secret
+
+grafana.ini:
+  server:
+    root_url: https://grafana.tool.bankid.cz
+  database:
+    type: postgres
+    host: 10.30.143.21:5432
+    user: grafana
+  auth.gitlab:
+    enabled: true
+    allow_sign_up: true
+    client_id: 12afab061eb96e1a8a52422a1d1de264d7aab5cf2ca14d29983f75dd2d929741
+    scopes: api
+    auth_url: https://git.bankid.cz/oauth/authorize
+    token_url: https://git.bankid.cz/oauth/token
+    api_url: https://git.bankid.cz/api/v4

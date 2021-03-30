@@ -1,0 +1,185 @@
+# this is required on the first installation, as sentry has to be initialized first
+# recommended to set false for updating the helm chart afterwards,
+# as you will have some downtime on each update if it's a hook
+# deploys relay & snuba consumers as post hooks
+asHook: true
+
+user:
+  create: false
+
+x-env-setting: &pswds
+  env:
+    - name: POSTGRES_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: pg-password
+          key: password
+    - name: SENTRY_EMAIL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: smtp-password
+          key: password
+
+x-small-resources: &smallresources
+  resources:
+    requests:
+      cpu: 32m
+      memory: 64Mi
+    limits:
+      cpu: 128m
+      memory: 128Mi
+
+x-medium-resources: &mediumresources
+  resources:
+    requests:
+      cpu: 64m
+      memory: 200Mi
+    limits:
+      cpu: 256m
+      memory: 600Mi
+
+x-big-resources: &bigresources
+  resources:
+    requests:
+      cpu: 256m
+      memory: 512Mi
+    limits:
+      cpu: 1024m
+      memory: 3Gi
+
+
+sentry:
+  singleOrganization: true
+  web:
+    replicas: 1
+    # if using filestore backend filesystem with RWO access, set strategyType to Recreate
+    strategyType: Recreate
+    probeInitialDelaySeconds: 60
+    <<: *mediumresources
+    <<: *pswds
+
+  features:
+    orgSubdomains: false
+
+  worker:
+    replicas: 1
+    <<: *pswds
+    <<: *bigresources
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 70
+
+  cleanup:
+    <<: *pswds
+
+  ingestConsumer:
+    <<: *mediumresources
+    <<: *pswds
+
+  cron:
+    <<: *mediumresources
+
+  postProcessForward:
+    <<: *mediumresources
+
+relay:
+  image:
+    repository: getsentry/relay:nightly
+  <<: *mediumresources
+
+hooks:
+  removeOnSuccess: false
+  dbInit:
+    <<: *pswds
+
+nginx:
+  enabled: false
+
+filestore:
+  backend: filesystem
+  filesystem:
+    path: /var/lib/sentry/files
+    persistence:
+      enabled: true
+      accessMode: ReadWriteMany
+      size: 40G
+      persistentWorkers: true
+#      persistentVolumeReclaimPolicy: Retain
+      storageClass: vsphere-read-write-many-retain
+#readinessProbe:
+#  enabled: true
+#  failureThreshold: "3"
+#  initialDelaySeconds: "30"
+#  periodSeconds: "30"
+#  successThreshold: "1"
+#  timeoutSeconds: "5"
+
+clickhouse:
+  enabled: true
+  clickhouse:
+    replicas: "1"
+    persistentVolumeClaim:
+      enabled: true
+      dataPersistentVolume:
+        enabled: true
+        storage: "20G"
+    <<: *bigresources
+
+mail:
+  backend: smtp
+  useTls: true
+  username: technical@bankid.cz
+  password: ""
+  port: 587
+  host: smtp.office365.com
+  from: noreply@bankid.cz
+
+postgresql:
+  enabled: false
+
+externalPostgresql:
+  port: 5432
+  username: sentry
+  database: sentry
+  password: just-to-make-chart-happy-actual-pswd-in-secret
+
+kafka:
+  enabled: true
+  persistence:
+    size: 8G
+  zookeeper:
+    persistence:
+      size: 8G
+  <<: *bigresources
+
+redis:
+  enabled: true
+  cluster:
+    enabled: false
+  nameOverride: sentry-redis
+  master:
+    persistence:
+      size: 40G
+
+rabbitmq:
+  enabled: false
+
+metrics:
+  enabled: true
+  <<: *smallresources
+
+snuba:
+  api:
+    <<: *smallresources
+  consumer:
+    <<: *smallresources
+  outcomesConsumer:
+    <<: *smallresources
+  replacer:
+    <<: *smallresources
+  sessionsConsumer:
+    <<: *smallresources
+  transactionsConsumer:
+    <<: *smallresources

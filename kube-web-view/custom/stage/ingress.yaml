@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: bankid-staging-issuer
+    cert-manager.io/common-name: dash.stage.bankid.cz
+  name: kube-web-view
+spec:
+  rules:
+  - host: dash.stage.bankid.cz
+    http:
+      paths:
+      - backend:
+          serviceName: kube-web-view
+          servicePort: 80
+        path: /
+  tls:
+  - secretName: kube-web-view-tls
+    hosts:
+    - dash.stage.bankid.cz

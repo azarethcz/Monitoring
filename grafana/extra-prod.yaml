@@ -1,0 +1,26 @@
+ingress:
+  enabled: true
+  hosts:
+    - grafana.bankid.cz
+  tls:
+    - secretName: grafana-tls-prod
+      hosts:
+        - grafana.bankid.cz
+
+datasources:
+ datasources.yaml:
+   apiVersion: 1
+   datasources:
+   - name: Prometheus-Prod
+     type: prometheus
+     url: https://prometheus.bankid.cz
+     access: proxy
+     isDefault: true
+
+grafana.ini:
+  server:
+    root_url: https://grafana.bankid.cz
+  database:
+    type: postgres
+    host: 10.10.103.202:5432
+    user: grafana

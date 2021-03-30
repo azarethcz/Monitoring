@@ -1,0 +1,26 @@
+ingress:
+  enabled: true
+  hostname: sentry.bankid.cz
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  tls:
+    - secretName: sentry-public-tls-prod
+      hosts:
+        - sentry.bankid.cz
+
+clickhouse:
+  clusterDomain: kubernetes.prod.bankid.loc
+
+externalPostgresql:
+  host: 10.10.103.202
+
+kafka:
+  clusterDomain: kubernetes.prod.bankid.loc
+
+redis:
+  clusterDomain: kubernetes.prod.bankid.loc
+
+snuba:
+  clusterDomain: kubernetes.prod.bankid.loc

@@ -1,0 +1,51 @@
+alertmanager:
+  ingress:
+    enabled: true
+    hosts:
+      - alertmanager.bankid.cz
+    tls:
+      - secretName: prometheus-public-tls-prod
+        hosts:
+          - alertmanager.bankid.cz
+
+server:
+  retention: "180d"
+  ingress:
+    enabled: true
+    hosts:
+      - prometheus.bankid.cz
+    tls:
+      - secretName: prometheus-public-tls-prod
+        hosts:
+          - prometheus.bankid.cz
+  resources:
+    requests:
+      cpu: 250m
+      memory: 500Mi
+    limits:
+      cpu: 500m
+      memory: 2Gi
+
+extraScrapeConfigs: |
+  - job_name: consul
+    metrics_path: "/v1/agent/metrics"
+    params:
+      format: ["prometheus"]
+    kubernetes_sd_configs:
+      - role: pod
+        namespaces:
+          names: ["consul"]
+    relabel_configs:
+      - action: keep
+        source_labels: [__address__]
+        regex: ".*:8500"
+      - separator: ;
+        regex: __meta_kubernetes_pod_label_(.+)
+        replacement: $1
+        action: labelmap
+      - source_labels: [__meta_kubernetes_pod_name]
+        separator: ;
+        regex: (.*)
+        target_label: kubernetes_pod_name
+        replacement: $1
+        action: replace

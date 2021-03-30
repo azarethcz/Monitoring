@@ -1,0 +1,12 @@
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: bankid-staging-issuer
+    cert-manager.io/common-name: kubeview.stage.bankid.cz
+  hosts:
+    - host: kubeview.stage.bankid.cz
+      paths: ["/"]
+  tls:
+    - secretName: kube-view-tls
+      hosts:
+        - kubeview.stage.bankid.cz

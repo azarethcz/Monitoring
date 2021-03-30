@@ -1,0 +1,15 @@
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  creationTimestamp: null
+  name: grafana-gitlab-oauth
+  namespace: infra-monitoring
+spec:
+  encryptedData:
+    client_secret: AgCfJGfBaFxOdtm1HEew7wCT7HT9+zb3x6nlDkeokFPjwPxb7z2pn87q3xInt2W1l1Ute+RxDcaq7H8jnXqv8C3kTvn/BjQCQFicZ7NKDmRi/bbOHDHTNsmMx9BNNLwJFBv6FH0XpvBsEGPL4K5+amCZ1yCsO9P0LF5uNCT9cpZcWUEyR6/DPcvhPSWtsCD2XYc54EmTLKBWSG7SZuGlyO7qGuuzLdS0Ig8HWPpP9KHxXUoi3d1S4SI46tkwwLJCK3usArolGXUDtzttdlLV1b/vVCTBdIgR7SkulNGRpyprDQsJ1fsFK2y8Fgyjc84XVRVru9TCFd3iPnBuYIxdtRAIKMU9JNZubFIG2ze3oCAi4kKg/PIlL+7GVidNA7fuN4rYxlzZqryBUyNnPItw+/gGGTXxWdC2cxWlJ7GEhhfO1cacicMbY6cUx4CAbsRRRZikYyjvVshyq5tDNU/SOSQo16g3f9kWyHIKUMWAZE1VkkoVl0QT292/WCWAjd1uqYHQlvE9sqbUED2OKgKJUEV8qZjEgdxsgPbH8VXNHCYpkJHMznHwGfR3S07itjdpb8sDBurcKiKAWZJhkXI5Hjw+gs/pU0+hc/zW2yKvjk61glKW/Uo9iTF0aIc1GqoXwqACReLDdovgwLlw/6tCd0iTn+t7fa3uryA9GBGOgXw0gbqDTzx+pKG0myT4eZZZSDH8onOSifuHQ8yUvSXlZ7RY5NrFfwIigXdGOOQIToS6WvHS6BbWhZnqeyaaAdamqkXH8lzQNdUAu2h/dH2CXAjq
+  template:
+    metadata:
+      creationTimestamp: null
+      name: grafana-gitlab-oauth
+      namespace: infra-monitoring
+
